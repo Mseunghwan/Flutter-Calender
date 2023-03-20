@@ -22,6 +22,18 @@ part 'drift_database.g.dart';
 class LocalDatabase extends _$LocalDatabase{
   LocalDatabase() : super(_openConnection());
 
+  Future<int> createSchedule(SchedulesCompanion data) => into(schedules).insert(data);
+  // insert는 insert한 값의 primary key를 리턴 -- 써도되고 안써도 상관없음
+
+  Future<int> createCategoryColors(CategoryColorsCompanion data) => into(categoryColors).insert(data);
+
+  Future<List<CategoryColor>> getCategoryColors() => select(categoryColors).get();
+
+  Stream<List<Schedule>> watchSchedules()=>
+      select(schedules).watch(); // 계속 지속적으로 업데이트 된 값 불러올 수 있음
+
+
+
   @override
   int get schemaVersion => 1;
   // 데이터베이스 버전이라고 생각하면 됨 - 구조 바뀔 때 마다 올려줘야

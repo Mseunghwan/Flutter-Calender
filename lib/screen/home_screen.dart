@@ -1,11 +1,13 @@
 import 'package:calender_schedular/const/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../component/calendar.dart';
 import '../component/schedule_bottom_sheet.dart';
 import '../component/schedule_card.dart';
 import '../component/today_banner.dart';
+import '../database/drift_database.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -58,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         isScrollControlled: true, // 디폴트 최대 크기가 화면 반이기에 늘려주는
         builder: (_){
-          return ScheduleBottomSheet();
+          return ScheduleBottomSheet(selectedDate: selectedDay,);
         },
       );
     },
@@ -87,20 +89,26 @@ class _ScheduleList extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: ListView.separated(
-            itemCount: 3,
-            separatorBuilder: (context, index) {
-              // 각 아이템 사이에 들어가는 빌더
-              return SizedBox(height: 8,);
-            },
-            itemBuilder: (context, index) {
-              return ScheduleCard(
-                startTime: 3,
-                endTime: 10,
-                content: '프로그래밍 공부하기',
-                color: Colors.red,
-              );
-            }),
+        child: StreamBuilder<List<Schedule>>(
+          stream: GetIt.I<LocalDatabase>().watchSchedules(),
+          builder: (context, snapshot) {
+            print(snapshot.data);
+            return ListView.separated(
+                itemCount: 3,
+                separatorBuilder: (context, index) {
+                  // 각 아이템 사이에 들어가는 빌더
+                  return SizedBox(height: 8,);
+                },
+                itemBuilder: (context, index) {
+                  return ScheduleCard(
+                    startTime: 3,
+                    endTime: 10,
+                    content: '프로그래밍 공부하기',
+                    color: Colors.red,
+                  );
+                });
+          }
+        ),
       ),
     );
   }

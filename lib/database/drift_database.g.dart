@@ -439,10 +439,9 @@ class CategoryColorsCompanion extends UpdateCompanion<CategoryColor> {
     this.hexCode = const Value.absent(),
   });
   CategoryColorsCompanion.insert({
-    required int id,
+    this.id = const Value.absent(),
     required String hexCode,
-  })  : id = Value(id),
-        hexCode = Value(hexCode);
+  }) : hexCode = Value(hexCode);
   static Insertable<CategoryColor> custom({
     Expression<int>? id,
     Expression<String>? hexCode,
@@ -492,7 +491,9 @@ class $CategoryColorsTable extends CategoryColors
   @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
       'id', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: const IntType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _hexCodeMeta = const VerificationMeta('hexCode');
   @override
   late final GeneratedColumn<String?> hexCode = GeneratedColumn<String?>(
@@ -511,8 +512,6 @@ class $CategoryColorsTable extends CategoryColors
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
     }
     if (data.containsKey('hex_code')) {
       context.handle(_hexCodeMeta,
@@ -524,7 +523,7 @@ class $CategoryColorsTable extends CategoryColors
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   CategoryColor map(Map<String, dynamic> data, {String? tablePrefix}) {
     return CategoryColor.fromData(data,
